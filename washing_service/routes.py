@@ -77,6 +77,24 @@ def read_washing_machines(building_id=None, laundry_room_id=None, washing_machin
     except Exception as e:
         return f"An Error Occured: {e}"
 
+@app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machine_id>/<wash_cycles>', methods=['GET'])
+def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=None, wash_cycles=None):
+
+    building = buildings_ref.document(building_id)
+    room = building.collection('laundry_rooms').document(laundry_room_id)
+    machine = room.collection('washing_machines').document(washing_machine_id)
+
+    try:
+        wash_cycle_id = request.args.get('id')
+        if wash_cycle_id:
+            wash_cycle = machine.collection(wash_cycles).document(wash_cycle_id).get()
+            return jsonify(wash_cycle.to_dict()), 200
+        else:
+            all_wash_cycles = [doc.to_dict() for doc in machine.collection(wash_cycles).stream()]
+            return jsonify(all_wash_cycles), 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
+
 
 # @app.route('/add', methods=['POST'])
 # def create():
