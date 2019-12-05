@@ -8,7 +8,7 @@ buildings_ref = db.collection('buildings')
 @app.route('/users', methods=['GET'])
 def read_users():
     """
-        read() : Fetches documents from Firestore collection as JSON
+        read() : Fetches documents from Fierestore collection as JSON
         todo : Return document that matches query ID
         all_todos : Return all documents
     """
@@ -42,6 +42,28 @@ def read_buildings():
             return jsonify(all_buildings), 200
     except Exception as e:
         return f"An Error Occured: {e}"
+
+
+
+@app.route('/buildings/<building_id>/<laundry_rooms>', methods=['GET'])
+def read_rooms(building_id=None, laundry_rooms=None):
+
+    building = buildings_ref.document(building_id)
+
+    try:
+        # Check if ID was passed to URL query
+        laundry_room_id = request.args.get('id')    
+        if laundry_room_id:
+            room = building.collection(laundry_rooms).document(laundry_room_id).get()
+            return jsonify(room.to_dict()), 200
+        else:
+            all_rooms = [doc.to_dict() for doc in building.collection(laundry_rooms).stream()]
+            return jsonify(all_rooms), 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
+
+
+
 
 # @app.route('/add', methods=['POST'])
 # def create():
