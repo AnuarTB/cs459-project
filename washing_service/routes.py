@@ -42,9 +42,7 @@ def read_buildings():
             return jsonify(all_buildings), 200
     except Exception as e:
         return f"An Error Occured: {e}"
-
-
-
+        
 @app.route('/buildings/<building_id>/<laundry_rooms>', methods=['GET'])
 def read_rooms(building_id=None, laundry_rooms=None):
 
@@ -62,7 +60,22 @@ def read_rooms(building_id=None, laundry_rooms=None):
     except Exception as e:
         return f"An Error Occured: {e}"
 
+@app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machines>', methods=['GET'])
+def read_washing_machines(building_id=None, laundry_room_id=None, washing_machines=None):
+    
+    building = buildings_ref.document(building_id)
+    room = building.collection('laundry_rooms').document(laundry_room_id)
 
+    try:
+        machine_id = request.args.get('id')
+        if machine_id:
+            machine = room.collection(washing_machines).document(machine_id).get()
+            return jsonify(machine.to_dict()), 200
+        else:
+            all_machines = [doc.to_dict() for doc in room.collection(washing_machines).stream()]   
+            return jsonify(all_machines), 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
 
 
 # @app.route('/add', methods=['POST'])
