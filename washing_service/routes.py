@@ -9,8 +9,8 @@ buildings_ref = db.collection('buildings')
 def read_users():
     """
         read() : Fetches documents from Fierestore collection as JSON
-        todo : Return document that matches query ID
-        all_todos : Return all documents
+        user_id : Return document that matches query ID
+        all_users : Return all documents
     """
     try:
         # Check if ID was passed to URL query
@@ -60,8 +60,8 @@ def read_rooms(building_id=None, laundry_rooms=None):
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machines>', methods=['GET'])
-def read_washing_machines(building_id=None, laundry_room_id=None, washing_machines=None):
+@app.route('/buildings/<building_id>/<laundry_room_id>/<all_washing_machines>', methods=['GET'])
+def read_washing_machines(building_id=None, laundry_room_id=None, all_washing_machines=None):
     
     building = buildings_ref.document(building_id)
     room = building.collection('laundry_rooms').document(laundry_room_id)
@@ -69,10 +69,10 @@ def read_washing_machines(building_id=None, laundry_room_id=None, washing_machin
     try:
         machine_id = request.args.get('id')
         if machine_id:
-            machine = room.collection(washing_machines).document(machine_id).get()
+            machine = room.collection(all_washing_machines).document(machine_id).get()
             return jsonify(machine.to_dict()), 200
         else:
-            all_machines = [doc.to_dict() for doc in room.collection(washing_machines).stream()]   
+            all_machines = [doc.to_dict() for doc in room.collection(all_washing_machines).stream()]   
             return jsonify(all_machines), 200
     except Exception as e:
         return f"An Error Occured: {e}"
@@ -82,7 +82,7 @@ def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=
 
     building = buildings_ref.document(building_id)
     room = building.collection('laundry_rooms').document(laundry_room_id)
-    machine = room.collection('washing_machines').document(washing_machine_id)
+    machine = room.collection('all_washing_machines').document(washing_machine_id)
 
     try:
         wash_cycle_id = request.args.get('id')
@@ -95,30 +95,31 @@ def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/buildings/<building_id>/washing_machines', methods=['GET'])
-def read_all_washing_machines(building_id=None, washing_machines=None):
+@app.route('/buildings/<building_id>/all_washing_machines', methods=['GET'])
+def read_all_washing_machines(building_id=None, all_washing_machines=None):
 
     building = buildings_ref.document(building_id)
-    # # all_rooms = [doc.to_dict() for doc in building.collection('laundry_rooms').stream()]
-    try:    
-        # all_rooms = building.collection('laundry_rooms').stream()
-        # all_machines = [doc.to_dict() for doc in all_rooms.collection(washing_machines).stream()]
-
-        # # for doc1 in building.collection('laundry_rooms').get():
-        # #     all_machines = [doc.to_dict() for doc in doc1.collection('washing_machines').stream()]'
-
-        docs = building.collection(u'laundry_rooms').stream()
-
+    try:          
+        docs = building.collection(u'laundry_rooms').list_documents()
+        machines_collections = []
         for doc in docs:
-            print(u'{} => {}'.format(doc.id, doc.to_dict()))
+            machines_collections += doc.collections()
 
+        wm_docs_list = []
 
-        # return jsonify(all_machines), 200
+        for col in machines_collections: 
+            wm_docs_list += col.list_documents()
+
+        all_washing_machines_snap = [doc.get() for doc in wm_docs_list]
+        all_washing_machines = [doc.to_dict() for doc in all_washing_machines_snap]
+
+        return jsonify(all_washing_machines), 200
 
     except Exception as e:
         return f"An Error Occured: {e}"
 
-    # return jsonify(all_rooms), 200
+@app.route('/buildings/<building_id>/laundry_rooms/all_wash_cycles', methods=['GET'])
+
 
 
 # @app.route('/add', methods=['POST'])
@@ -135,7 +136,7 @@ def read_all_washing_machines(building_id=None, washing_machines=None):
 #     except Exception as e:
 #         return f"An Error Occured: {e}"
 
-# @app.route('/update', methods=['POST', 'PUT'])
+# @app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machine_id>/<wash_cycles>', methods=['POST', 'PUT'])
 # def update():
 #     """
 #         update() : Update document in Firestore collection with request body
