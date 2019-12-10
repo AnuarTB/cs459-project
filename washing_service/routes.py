@@ -5,6 +5,7 @@ from washing_service import app, db
 user_ref = db.collection('users')
 buildings_ref = db.collection('buildings')
 
+
 @app.route('/users', methods=['GET'])
 def read_users():
     """
@@ -23,6 +24,7 @@ def read_users():
             return jsonify(all_users), 200
     except Exception as e:
         return f"An Error Occured: {e}"
+
 
 @app.route('/buildings', methods=['GET'])
 def read_buildings():
@@ -43,6 +45,7 @@ def read_buildings():
     except Exception as e:
         return f"An Error Occured: {e}"
         
+
 @app.route('/buildings/<building_id>/<laundry_rooms>', methods=['GET'])
 def read_rooms(building_id=None, laundry_rooms=None):
 
@@ -60,6 +63,7 @@ def read_rooms(building_id=None, laundry_rooms=None):
     except Exception as e:
         return f"An Error Occured: {e}"
 
+
 @app.route('/buildings/<building_id>/<laundry_room_id>/<all_washing_machines>', methods=['GET'])
 def read_washing_machines(building_id=None, laundry_room_id=None, all_washing_machines=None):
     
@@ -76,6 +80,7 @@ def read_washing_machines(building_id=None, laundry_room_id=None, all_washing_ma
             return jsonify(all_machines), 200
     except Exception as e:
         return f"An Error Occured: {e}"
+
 
 @app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machine_id>/<wash_cycles>', methods=['GET'])
 def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=None, wash_cycles=None):
@@ -95,12 +100,13 @@ def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=
     except Exception as e:
         return f"An Error Occured: {e}"
 
+
 @app.route('/buildings/<building_id>/all_washing_machines', methods=['GET'])
 def read_all_washing_machines(building_id=None, all_washing_machines=None):
 
     building = buildings_ref.document(building_id)
     try:          
-        docs = building.collection(u'laundry_rooms').list_documents()
+        docs = building.collection('laundry_rooms').list_documents()
         machines_collections = []
         for doc in docs:
             machines_collections += doc.collections()
@@ -118,8 +124,34 @@ def read_all_washing_machines(building_id=None, all_washing_machines=None):
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/buildings/<building_id>/laundry_rooms/all_wash_cycles', methods=['GET'])
 
+@app.route('/buildings/<building_id>/laundry_rooms/all_wash_cycles', methods=['GET'])
+def read_all_wash_cycles(building_id=None):
+
+    building = buildings_ref.document(building_id)
+    laundry_room_id = request.args.get('id')    
+
+    try:
+        if laundry_room_id:
+            return
+        
+        else:
+            all_laundry_room_docs = building.collection('laundry_rooms').list_documents()
+            all_washing_machines_snap = []
+            
+            for doc in all_laundry_room_docs:
+                temp_washing_machine_docs = doc.collection('washing_machines').list_documents()
+                for doc in temp_washing_machine_docs:
+                    temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
+                    all_washing_machines_snap += [doc.get() for doc in temp_wash_cycle_docs]
+
+
+            all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_snap]
+
+            return jsonify(all_wash_cycles), 200
+
+    except Exception as e:
+        return f"An Error Occured: {e}"
 
 
 # @app.route('/add', methods=['POST'])
