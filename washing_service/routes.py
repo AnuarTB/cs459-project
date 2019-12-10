@@ -1,6 +1,7 @@
 from flask import request, jsonify
 from washing_service import app, db
-
+from washing_service import statisticsServiceClient as stat_client
+from washing_service import washingMachineClient as wm_client
 
 user_ref = db.collection('users')
 buildings_ref = db.collection('buildings')
@@ -126,7 +127,7 @@ def read_all_washing_machines(building_id=None, all_washing_machines=None):
 
 
 @app.route('/buildings/<building_id>/laundry_rooms/all_wash_cycles', methods=['GET'])
-def read_all_wash_cycles(building_id=None):
+def read_all_wash_cycles(building_id=None, laundry_room_id=None) :
 
     building = buildings_ref.document(building_id)
     laundry_room_id = request.args.get('id')    
@@ -160,6 +161,13 @@ def read_all_wash_cycles(building_id=None):
     except Exception as e:
         return f"An Error Occured: {e}"
 
+
+@app.route('/buildings/<building_id>/<laundry_room_id>/get_daily_stat', methods=['GET'])
+def invoke_stat_service(building_id=None, laundry_room_id=None):
+    wash_cycles = read_all_wash_cycles(building_id, laundry_room_id)
+
+    test = stat_client.test(wash_cycles)
+    return test
 
 # @app.route('/add', methods=['POST'])
 # def create():
