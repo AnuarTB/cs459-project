@@ -133,8 +133,16 @@ def read_all_wash_cycles(building_id=None):
 
     try:
         if laundry_room_id:
-            return
-        
+            laundry_room_doc = building.collection('laundry_rooms').document(laundry_room_id)
+            washing_machine_docs = laundry_room_doc.collection('washing_machines').list_documents()
+            all_washing_machines_by_id_snap = []
+            for doc in washing_machine_docs:
+                    temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
+                    all_washing_machines_by_id_snap += [doc.get() for doc in temp_wash_cycle_docs]
+
+            all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_by_id_snap]
+
+            return jsonify(all_wash_cycles), 200        
         else:
             all_laundry_room_docs = building.collection('laundry_rooms').list_documents()
             all_washing_machines_snap = []
@@ -144,7 +152,6 @@ def read_all_wash_cycles(building_id=None):
                 for doc in temp_washing_machine_docs:
                     temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
                     all_washing_machines_snap += [doc.get() for doc in temp_wash_cycle_docs]
-
 
             all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_snap]
 
