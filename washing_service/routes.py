@@ -167,7 +167,8 @@ def invoke_stat_service(building_id=None, laundry_room_id=None):
     wash_cycles = read_all_wash_cycles(building_id, laundry_room_id)
 
     test = stat_client.test(wash_cycles)
-    return test
+    
+    return test, 200
 
 # @app.route('/add', methods=['POST'])
 # def create():
