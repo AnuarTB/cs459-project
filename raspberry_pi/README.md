@@ -13,7 +13,7 @@ Node-RED code is located in [flow.json](flow.json) and it is easily importable t
 
 **Output**:
 
-- JSON array of objects:
+- Example of an object:
 
 ```javascript
 {
