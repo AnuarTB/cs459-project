@@ -6,12 +6,12 @@ Node-RED code is located in [flow.json](flow.json) and it is easily importable t
 
 `/fetch`
 
-Request: `GET`
+**Request**: `GET`
 
-Input:
+**Input**:
 - `timestamp : String` - A string denoting timestamp, i.e. the time in seconds passed from Jan 1, 1970 (Unix time).
 
-Output:
+**Output**:
 
 - JSON array of objects:
 
@@ -22,15 +22,15 @@ Output:
 }
 ```
 
-Fetches the data and returns all data entries whose timestamps are *strictly* greater than the input timestamp.
+Fetches the data and returns all data entries whose timestamps are **strictly** greater than the input timestamp.
 
 ![fetch](fetch.png)
 
 `/file`
 
-Request: `GET`
+**Request**: `GET`
 
-Output:
+**Output**:
 - A string which denotes the content of the file where the washing machine data is written.
 
 Gets the content of the data file of washing machine.
@@ -39,9 +39,9 @@ Gets the content of the data file of washing machine.
 
 `/empty`
 
-Request: `GET`
+**Request**: `GET`
 
-Output:
+**Output**:
 - A string which denotes the content of the file where the washing machine data is written.
 
 Empties the content of the data file of washing machine.
@@ -50,6 +50,6 @@ Empties the content of the data file of washing machine.
 
 ## Notes
 
-It is possible to emulate the behavior of washing machine with the inject component and this flow below:
+It is possible to emulate the behavior of washing machine with this flow below through inject component:
 
 ![flow](injection.png)
