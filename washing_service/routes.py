@@ -2,6 +2,7 @@ from flask import request, jsonify
 from washing_service import app, db
 from washing_service import statisticsServiceClient as stat_client
 from washing_service import washingMachineClient as wm_client
+import json, sys, datetime
 
 user_ref = db.collection('users')
 buildings_ref = db.collection('buildings')
@@ -156,7 +157,7 @@ def read_all_wash_cycles(building_id=None, laundry_room_id=None) :
 
             all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_snap]
 
-            return jsonify(all_wash_cycles), 200
+            return jsonify(all_wash_cycles)
 
     except Exception as e:
         return f"An Error Occured: {e}"
@@ -164,11 +165,37 @@ def read_all_wash_cycles(building_id=None, laundry_room_id=None) :
 
 @app.route('/buildings/<building_id>/<laundry_room_id>/get_daily_stat', methods=['GET'])
 def invoke_stat_service(building_id=None, laundry_room_id=None):
-    wash_cycles = read_all_wash_cycles(building_id, laundry_room_id)
-
-    test = stat_client.test(wash_cycles)
+    # wash_cycles = read_all_wash_cycles(building_id, laundry_room_id)
+    wash_cycles = read_all_wash_cycles_json(building_id, laundry_room_id)
     
-    return test, 200
+    test = stat_client.get_statistics(wash_cycles)
+    
+    return jsonify(test)
+
+
+def read_all_wash_cycles_json(building_id=None, laundry_room_id=None):
+    building = buildings_ref.document(building_id)
+
+    all_laundry_room_docs = building.collection('laundry_rooms').list_documents()
+    all_washing_machines_snap = []
+            
+    for doc in all_laundry_room_docs:
+        temp_washing_machine_docs = doc.collection('washing_machines').list_documents()
+        for doc in temp_washing_machine_docs:
+            temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
+            all_washing_machines_snap += [doc.get() for doc in temp_wash_cycle_docs]
+
+    all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_snap]
+
+    data = json.dumps(all_wash_cycles, default=convert_timestamp)
+
+    return data
+
+    
+def convert_timestamp(item_date_object):
+    if isinstance(item_date_object, (datetime.date, datetime.datetime)):
+        return item_date_object.timestamp()
+
 
 # @app.route('/add', methods=['POST'])
 # def create():
