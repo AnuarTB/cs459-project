@@ -167,24 +167,32 @@ def read_all_wash_cycles(building_id=None, laundry_room_id=None) :
 def invoke_stat_service(building_id=None, laundry_room_id=None):
     (wash_cycles, num_of_machines) = read_all_wash_cycles_json(building_id, laundry_room_id)
     
-    test = stat_client.get_statistics(wash_cycles, num_of_machines)
+    weekday = request.args.get('weekday')    
+
+    if weekday:
+        stats = stat_client.get_statistics(wash_cycles, num_of_machines, weekday)
+    else:
+        stats = stat_client.get_statistics_today(wash_cycles, num_of_machines)
     
-    return jsonify(test)
+    return jsonify(stats)
 
 
 def read_all_wash_cycles_json(building_id=None, laundry_room_id=None):
-    num_of_machines = 0
+    
     building = buildings_ref.document(building_id)
                 
     laundry_room_doc = building.collection('laundry_rooms').document(laundry_room_id)
     washing_machine_docs = laundry_room_doc.collection('washing_machines').list_documents()
+
+    # Count number of machines.
+    all_machines = [doc.to_dict() for doc in laundry_room_doc.collection('washing_machines').stream()]   
+    num_of_machines = len(all_machines)
 
     all_washing_machines_by_id_snap = []
     for doc in washing_machine_docs:
         temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
         all_washing_machines_by_id_snap += [doc.get() for doc in temp_wash_cycle_docs]
         
-
         all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_by_id_snap]
 
     data = json.dumps(all_wash_cycles, default=convert_timestamp)
