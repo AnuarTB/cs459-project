@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from distutils.util import strtobool
 from washing_service import app, db
 from washing_service import statisticsServiceClient as stat_client
 from washing_service import washingMachineClient as wm_client
@@ -10,11 +11,7 @@ buildings_ref = db.collection('buildings')
 
 @app.route('/users', methods=['GET'])
 def read_users():
-    """
-        read() : Fetches documents from Fierestore collection as JSON
-        user_id : Return document that matches query ID
-        all_users : Return all documents
-    """
+
     try:
         # Check if ID was passed to URL query
         user_id = request.args.get('id')    
@@ -30,11 +27,7 @@ def read_users():
 
 @app.route('/buildings', methods=['GET'])
 def read_buildings():
-    """
-        read() : Fetches documents from Firestore collection as JSON
-        building : Return document that matches query ID
-        all_buildings : Return all documents
-    """
+   
     try:
         # Check if ID was passed to URL query
         building_id = request.args.get('id')    
@@ -89,7 +82,7 @@ def read_wash_cycles(building_id=None, laundry_room_id=None, washing_machine_id=
 
     building = buildings_ref.document(building_id)
     room = building.collection('laundry_rooms').document(laundry_room_id)
-    machine = room.collection('all_washing_machines').document(washing_machine_id)
+    machine = room.collection('washing_machines').document(washing_machine_id)
 
     try:
         wash_cycle_id = request.args.get('id')
@@ -175,6 +168,23 @@ def invoke_stat_service(building_id=None, laundry_room_id=None):
         stats = stat_client.get_statistics_today(wash_cycles, num_of_machines)
     
     return jsonify(stats)
+
+
+@app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machine_id>/update', methods=['GET'])
+def update_washing_machine(building_id=None, laundry_room_id=None, washing_machine_id=None):
+    is_running = request.args.get('is_running')
+    building = buildings_ref.document(building_id)
+    room = building.collection('laundry_rooms').document(laundry_room_id)
+    machine = room.collection('washing_machines').document(washing_machine_id)
+
+    try:
+        if is_running:
+            machine.update({"is_running": bool(strtobool(is_running))})
+        
+            return jsonify({"success": True}), 200    
+    
+    except Exception as e:
+        return f"An Error Occured: {e}" 
 
 
 def read_all_wash_cycles_json(building_id=None, laundry_room_id=None):
