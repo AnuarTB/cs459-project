@@ -165,31 +165,31 @@ def read_all_wash_cycles(building_id=None, laundry_room_id=None) :
 
 @app.route('/buildings/<building_id>/<laundry_room_id>/get_daily_stat', methods=['GET'])
 def invoke_stat_service(building_id=None, laundry_room_id=None):
-    # wash_cycles = read_all_wash_cycles(building_id, laundry_room_id)
-    wash_cycles = read_all_wash_cycles_json(building_id, laundry_room_id)
+    (wash_cycles, num_of_machines) = read_all_wash_cycles_json(building_id, laundry_room_id)
     
-    test = stat_client.get_statistics(wash_cycles)
+    test = stat_client.get_statistics(wash_cycles, num_of_machines)
     
     return jsonify(test)
 
 
 def read_all_wash_cycles_json(building_id=None, laundry_room_id=None):
+    num_of_machines = 0
     building = buildings_ref.document(building_id)
+                
+    laundry_room_doc = building.collection('laundry_rooms').document(laundry_room_id)
+    washing_machine_docs = laundry_room_doc.collection('washing_machines').list_documents()
 
-    all_laundry_room_docs = building.collection('laundry_rooms').list_documents()
-    all_washing_machines_snap = []
-            
-    for doc in all_laundry_room_docs:
-        temp_washing_machine_docs = doc.collection('washing_machines').list_documents()
-        for doc in temp_washing_machine_docs:
-            temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
-            all_washing_machines_snap += [doc.get() for doc in temp_wash_cycle_docs]
+    all_washing_machines_by_id_snap = []
+    for doc in washing_machine_docs:
+        temp_wash_cycle_docs = doc.collection('wash_cycles').list_documents()
+        all_washing_machines_by_id_snap += [doc.get() for doc in temp_wash_cycle_docs]
+        
 
-    all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_snap]
+        all_wash_cycles = [doc.to_dict() for doc in all_washing_machines_by_id_snap]
 
     data = json.dumps(all_wash_cycles, default=convert_timestamp)
 
-    return data
+    return data, num_of_machines
 
     
 def convert_timestamp(item_date_object):
