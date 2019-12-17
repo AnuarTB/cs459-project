@@ -4,7 +4,7 @@ from washing_service import app, db
 from washing_service import statisticsServiceClient as stat_client
 from washing_service import washingMachineClient as wm_client
 import json, sys, datetime
-
+import requests
 user_ref = db.collection('users')
 buildings_ref = db.collection('buildings')
 
