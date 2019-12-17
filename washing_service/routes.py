@@ -181,8 +181,13 @@ def update_washing_machine(building_id=None, laundry_room_id=None, washing_machi
         if is_running:
             machine.update({"is_running": bool(strtobool(is_running))})
         
-            return jsonify({"success": True}), 200    
-    
+            return jsonify({"success": True}), 200
+        else:
+            is_running = wm_client.get_wm_status(washing_machine_id)
+            machine.update({"is_running": bool(strtobool(is_running))})
+            
+            return jsonify({"success": True}), 200
+
     except Exception as e:
         return f"An Error Occured: {e}" 
 
