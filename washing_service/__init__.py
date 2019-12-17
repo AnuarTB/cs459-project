@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 # Initialize Firestore DB
 if (not len(firebase_admin._apps)):
-    cred = credentials.Certificate('/Users/thomasmattsson/Desktop/washing-machine-service-fdc63-firebase-adminsdk-la50h-eabce11589.json')
+    cred = credentials.Certificate('/Users/kunduzb17/Downloads/washing-machine-service-fdc63-firebase-adminsdk-la50h-24cdd573d7.json')
     default_app = firebase_admin.initialize_app(cred)
 
 db = firestore.client()

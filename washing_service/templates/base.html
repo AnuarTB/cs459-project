@@ -1,0 +1,63 @@
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Task Timeline</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+    <div class="container-fluid">
+      <div class="row">
+        <div class = "offset-md-4 col-md-4">
+          <h2>Login</h2>
+          <form action="{{ url_for('home') }}" method="post">
+                <div class="form-group">
+                  <label for="exampleFormControlSelect1">Select Dormitory</label>
+                  <select class="form-control" id="dorm" name = "dorm">
+                    <option>Areum Hall</option>
+                    <option>Sarang Hall</option>
+                    <option>Jilli Hall</option>
+                    <option>Heemang Hall</option>
+                    <option>Munji Hall</option>
+                    <option>Mir Hall</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                    <label for="exampleFormControlSelect1">Select Floor</label>
+                    <select class="form-control" id="room" name = "room">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="email" name ="email" aria-describedby="emailHelp">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="password" name="password">
+              </div>
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="admin" name="admin">
+                <label class="form-check-label" for="exampleCheck1">Login as Admin</label>
+              </div>
+              <div id = "log">
+                  <input type="submit" value="Login" class="btn btn-primary">
+                  <button id = "register" type="register" class="btn btn-primary">Register</button>
+              </div>
+            </form>
+        </div>
+
+      </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    {% block js%}{% endblock%}
+  </body>
+</html>
