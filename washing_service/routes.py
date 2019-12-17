@@ -259,9 +259,9 @@ def process():
     if request.method == "POST":
         day = request.form["day"]
         print(day)
-        return render_template('base.html')
+        return render_template('home.html')
         
-    return render_template('base.html')
+    return render_template('home.html')
 
 def get_build_id(value, name):
     for i in value:
@@ -279,4 +279,3 @@ def get_running_wm(value, boo):
         if(i['is_running']==boo):
             avail_wm.append(i['name'])
     return avail_wm
-
