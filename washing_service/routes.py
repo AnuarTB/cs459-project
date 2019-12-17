@@ -1,7 +1,9 @@
-from flask import request, jsonify
+from flask import request, jsonify, render_template, redirect, url_for
 from washing_service import app, db
 from washing_service import statisticsServiceClient as stat_client
 from washing_service import washingMachineClient as wm_client
+import json
+import requests
 
 user_ref = db.collection('users')
 buildings_ref = db.collection('buildings')
@@ -44,8 +46,7 @@ def read_buildings():
             all_buildings = [doc.to_dict() for doc in buildings_ref.stream()]
             return jsonify(all_buildings), 200
     except Exception as e:
-        return f"An Error Occured: {e}"
-        
+        return f"An Error Occured: {e}"    
 
 @app.route('/buildings/<building_id>/<laundry_rooms>', methods=['GET'])
 def read_rooms(building_id=None, laundry_rooms=None):
@@ -63,7 +64,6 @@ def read_rooms(building_id=None, laundry_rooms=None):
             return jsonify(all_rooms), 200
     except Exception as e:
         return f"An Error Occured: {e}"
-
 
 @app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machines>', methods=['GET'])
 def read_washing_machines(building_id=None, laundry_room_id=None, washing_machines=None):
@@ -209,4 +209,74 @@ def invoke_stat_service(building_id=None, laundry_room_id=None):
 #         return jsonify({"success": True}), 200
 #     except Exception as e:
 #         return f"An Error Occured: {e}"
+
+class User:
+    def __init__(self, email, password, building,room, admin):
+        self.email = email
+        self.password = password
+        self.building = building
+        self.room = room
+        self.admin = admin
+@app.route('/')
+@app.route('/base')
+def index():
+    return render_template('base.html')
+
+@app.route('/home', methods=['POST'])
+def home():
+    if request.method == "POST":
+        root= 'http://localhost:5000/'
+        email = request.form["email"]
+        password = request.form["password"]
+        building = request.form["dorm"]
+        room = int(request.form["room"])
+        default_user = "off"
+        admin = request.form.get('admin', default_user)
+        user = User(email, password, building, room, admin)
+        avail_wm = read_buildings()
+
+        #getting building id
+        avail_build = requests.get(root+'buildings')
+        build = avail_build.text
+        j_build = json.loads(build)
+        build_id = get_build_id(j_build, user.building)
+
+        #getting room id
+        avail_room = requests.get(root+'buildings/'+build_id+'/laundry_rooms')
+        room = avail_room.text
+        j_room = json.loads(room)
+        room_id = get_room_id(j_room, user.room)
+
+        #getting washing machines
+        all_washing_machine = requests.get(root+'buildings/'+build_id+'/'+room_id+'/washing_machines')
+        washing_machine = all_washing_machine.text
+        j_wm = json.loads(washing_machine)
+        avail_wms = get_running_wm(j_wm, False)
+    return render_template('home.html', avil = True, avail_wms = len(avail_wms), total_wms = len(j_wm))
+
+@app.route('/process', methods=['POST'])
+def process():
+    if request.method == "POST":
+        day = request.form["day"]
+        print(day)
+        return render_template('base.html')
+        
+    return render_template('base.html')
+
+def get_build_id(value, name):
+    for i in value:
+        if (i['name']==name):
+            return i['id']
+
+def get_room_id(value, num):
+    for i in value:
+        if(i['floor_number']==num):
+            return i['name']
+        
+def get_running_wm(value, boo):
+    avail_wm = []
+    for i in value:
+        if(i['is_running']==boo):
+            avail_wm.append(i['name'])
+    return avail_wm
 
