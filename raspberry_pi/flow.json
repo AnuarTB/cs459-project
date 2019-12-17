@@ -1,0 +1,468 @@
+[
+    {
+        "id": "b3db8fe0.90da3",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "ae3aa8ff.8c6ea8",
+        "type": "http in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "url": "/fetch",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 220,
+        "wires": [
+            [
+                "f64296af.6d4448",
+                "7fbd29f.e7be5d8"
+            ]
+        ]
+    },
+    {
+        "id": "dd716e22.9205e",
+        "type": "function",
+        "z": "b3db8fe0.90da3",
+        "name": "WM status",
+        "func": "msg.payload = {\n    'timestamp': `${msg.payload}`,\n    'status': true\n};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 310,
+        "y": 440,
+        "wires": [
+            [
+                "48852e78.551d4"
+            ]
+        ]
+    },
+    {
+        "id": "48852e78.551d4",
+        "type": "file",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 480,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "df4c2a95.90f428",
+        "type": "file in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 100,
+        "y": 120,
+        "wires": [
+            [
+                "74718e00.c6966"
+            ]
+        ]
+    },
+    {
+        "id": "72d88161.aaa31",
+        "type": "http in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "url": "/file",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 660,
+        "wires": [
+            [
+                "640e7618.3560b8"
+            ]
+        ]
+    },
+    {
+        "id": "640e7618.3560b8",
+        "type": "file in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 280,
+        "y": 660,
+        "wires": [
+            [
+                "c35179ab.4bb9d8"
+            ]
+        ]
+    },
+    {
+        "id": "c35179ab.4bb9d8",
+        "type": "change",
+        "z": "b3db8fe0.90da3",
+        "name": "Set Headers",
+        "rules": [
+            {
+                "t": "set",
+                "p": "headers",
+                "pt": "msg",
+                "to": "{}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "headers.content-type",
+                "pt": "msg",
+                "to": "text/plain",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 460,
+        "y": 660,
+        "wires": [
+            [
+                "491dc9dd.3c0e28"
+            ]
+        ]
+    },
+    {
+        "id": "491dc9dd.3c0e28",
+        "type": "http response",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 640,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "e8eeccc5.5b843",
+        "type": "change",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "file",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 260,
+        "wires": [
+            [
+                "becebd41.0701c"
+            ]
+        ]
+    },
+    {
+        "id": "f64296af.6d4448",
+        "type": "change",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "timestamp",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 320,
+        "y": 300,
+        "wires": [
+            [
+                "becebd41.0701c"
+            ]
+        ]
+    },
+    {
+        "id": "becebd41.0701c",
+        "type": "join",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 510,
+        "y": 280,
+        "wires": [
+            [
+                "7f9e0926.c40b68"
+            ]
+        ]
+    },
+    {
+        "id": "7fbd29f.e7be5d8",
+        "type": "change",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "wm_data",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 120,
+        "y": 160,
+        "wires": [
+            [
+                "df4c2a95.90f428"
+            ]
+        ]
+    },
+    {
+        "id": "37082d1d.433482",
+        "type": "http in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "url": "/empty",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 120,
+        "y": 720,
+        "wires": [
+            [
+                "6e0ddcbe.8e68b4"
+            ]
+        ]
+    },
+    {
+        "id": "6e0ddcbe.8e68b4",
+        "type": "file in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 330,
+        "y": 720,
+        "wires": [
+            [
+                "9aec4d88.38352",
+                "98ce25dd.67b4b8"
+            ]
+        ]
+    },
+    {
+        "id": "9aec4d88.38352",
+        "type": "http response",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 560,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "eca21230.9b50a",
+        "type": "file",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "appendNewline": false,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 680,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98ce25dd.67b4b8",
+        "type": "change",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 800,
+        "wires": [
+            [
+                "eca21230.9b50a"
+            ]
+        ]
+    },
+    {
+        "id": "74718e00.c6966",
+        "type": "function",
+        "z": "b3db8fe0.90da3",
+        "name": "string to JSON object",
+        "func": "let chunks = msg.payload.split(/\\r?\\n/);\nlet statuses = [];\nfor (chunk of chunks){\n    if(!chunk)\n        continue;\n    //console.log(chunk);\n    statuses.push(JSON.parse(chunk));\n}\nmsg.payload = statuses;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 140,
+        "y": 80,
+        "wires": [
+            [
+                "e8eeccc5.5b843"
+            ]
+        ]
+    },
+    {
+        "id": "7f9e0926.c40b68",
+        "type": "function",
+        "z": "b3db8fe0.90da3",
+        "name": "Filter with timestamp",
+        "func": "let statuses = msg.payload.file;\nlet cur_timestamp = msg.payload.timestamp.timestamp;\nlet cut = 0;\nfor(let i = 0; i < statuses.length; ++i){\n    if(statuses[i].timestamp > cur_timestamp){\n        cut = i;\n        break;\n    }\n}\nmsg.payload = statuses.slice(cut);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 700,
+        "y": 280,
+        "wires": [
+            [
+                "976c2739.6fdfb8"
+            ]
+        ]
+    },
+    {
+        "id": "976c2739.6fdfb8",
+        "type": "http response",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 870,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "1d1a7716.8955c9",
+        "type": "inject",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "dd716e22.9205e"
+            ]
+        ]
+    },
+    {
+        "id": "594aac04.8692f4",
+        "type": "file",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 480,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6c114271.93911c",
+        "type": "function",
+        "z": "b3db8fe0.90da3",
+        "name": "WM status",
+        "func": "let OFFSET = 5; // time between writes in seconds\nlet timestamp = Math.floor(Date.now() / 1000).valueOf();\nlet prev_timestamp = context.get('timestamp') || 0;\n\nif(timestamp > prev_timestamp + OFFSET){\n    msg.payload = {\n        'timestamp': `${timestamp}`,\n        'status': true\n    };\n    context.set('timestamp', timestamp);\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 520,
+        "wires": [
+            [
+                "594aac04.8692f4"
+            ]
+        ]
+    },
+    {
+        "id": "844c7fa.527b68",
+        "type": "rpi-gpio in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "pin": "11",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "6c114271.93911c"
+            ]
+        ]
+    }
+]
