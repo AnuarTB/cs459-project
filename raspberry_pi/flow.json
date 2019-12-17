@@ -1,15 +1,15 @@
 [
     {
-        "id": "f942f178.4481e",
+        "id": "b3db8fe0.90da3",
         "type": "tab",
         "label": "Flow 3",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "a0510d97.6224e",
+        "id": "ae3aa8ff.8c6ea8",
         "type": "http in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "url": "/fetch",
         "method": "get",
@@ -19,15 +19,15 @@
         "y": 220,
         "wires": [
             [
-                "4460b60f.b90798",
-                "106ac4d1.93219b"
+                "f64296af.6d4448",
+                "7fbd29f.e7be5d8"
             ]
         ]
     },
     {
-        "id": "1a34a91f.4274f7",
+        "id": "dd716e22.9205e",
         "type": "function",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "WM status",
         "func": "msg.payload = {\n    'timestamp': `${msg.payload}`,\n    'status': true\n};\nreturn msg;",
         "outputs": 1,
@@ -36,14 +36,14 @@
         "y": 440,
         "wires": [
             [
-                "5edef0e3.e50a4"
+                "48852e78.551d4"
             ]
         ]
     },
     {
-        "id": "5edef0e3.e50a4",
+        "id": "48852e78.551d4",
         "type": "file",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "filename": "wm_data",
         "appendNewline": true,
@@ -57,9 +57,9 @@
         ]
     },
     {
-        "id": "5103e22c.822f7c",
+        "id": "df4c2a95.90f428",
         "type": "file in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "filename": "wm_data",
         "format": "utf8",
@@ -70,51 +70,31 @@
         "y": 120,
         "wires": [
             [
-                "cf6349fb.557248"
+                "74718e00.c6966"
             ]
         ]
     },
     {
-        "id": "5d21d929.c745c8",
-        "type": "inject",
-        "z": "f942f178.4481e",
-        "name": "",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "x": 140,
-        "y": 440,
-        "wires": [
-            [
-                "1a34a91f.4274f7"
-            ]
-        ]
-    },
-    {
-        "id": "9b9b5f10.d0e03",
+        "id": "72d88161.aaa31",
         "type": "http in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "url": "/file",
         "method": "get",
         "upload": false,
         "swaggerDoc": "",
         "x": 100,
-        "y": 580,
+        "y": 660,
         "wires": [
             [
-                "41de8e5d.3eebd"
+                "640e7618.3560b8"
             ]
         ]
     },
     {
-        "id": "41de8e5d.3eebd",
+        "id": "640e7618.3560b8",
         "type": "file in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "filename": "wm_data",
         "format": "utf8",
@@ -122,17 +102,17 @@
         "sendError": false,
         "encoding": "none",
         "x": 280,
-        "y": 580,
+        "y": 660,
         "wires": [
             [
-                "85411378.f61b1"
+                "c35179ab.4bb9d8"
             ]
         ]
     },
     {
-        "id": "85411378.f61b1",
+        "id": "c35179ab.4bb9d8",
         "type": "change",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "Set Headers",
         "rules": [
             {
@@ -156,28 +136,28 @@
         "to": "",
         "reg": false,
         "x": 460,
-        "y": 580,
+        "y": 660,
         "wires": [
             [
-                "37f1c631.5d379a"
+                "491dc9dd.3c0e28"
             ]
         ]
     },
     {
-        "id": "37f1c631.5d379a",
+        "id": "491dc9dd.3c0e28",
         "type": "http response",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "statusCode": "",
         "headers": {},
         "x": 640,
-        "y": 580,
+        "y": 660,
         "wires": []
     },
     {
-        "id": "7b66cd4d.a14194",
+        "id": "e8eeccc5.5b843",
         "type": "change",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "rules": [
             {
@@ -197,14 +177,14 @@
         "y": 260,
         "wires": [
             [
-                "3e118eb1.b92b32"
+                "becebd41.0701c"
             ]
         ]
     },
     {
-        "id": "4460b60f.b90798",
+        "id": "f64296af.6d4448",
         "type": "change",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "rules": [
             {
@@ -224,14 +204,14 @@
         "y": 300,
         "wires": [
             [
-                "3e118eb1.b92b32"
+                "becebd41.0701c"
             ]
         ]
     },
     {
-        "id": "3e118eb1.b92b32",
+        "id": "becebd41.0701c",
         "type": "join",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "mode": "custom",
         "build": "object",
@@ -252,14 +232,14 @@
         "y": 280,
         "wires": [
             [
-                "d24aa347.9482"
+                "7f9e0926.c40b68"
             ]
         ]
     },
     {
-        "id": "106ac4d1.93219b",
+        "id": "7fbd29f.e7be5d8",
         "type": "change",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "rules": [
             {
@@ -279,14 +259,14 @@
         "y": 160,
         "wires": [
             [
-                "5103e22c.822f7c"
+                "df4c2a95.90f428"
             ]
         ]
     },
     {
-        "id": "a910f7c3.9bb698",
+        "id": "37082d1d.433482",
         "type": "http in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "url": "/empty",
         "method": "get",
@@ -296,14 +276,14 @@
         "y": 720,
         "wires": [
             [
-                "8fc554f9.d39d18"
+                "6e0ddcbe.8e68b4"
             ]
         ]
     },
     {
-        "id": "8fc554f9.d39d18",
+        "id": "6e0ddcbe.8e68b4",
         "type": "file in",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "filename": "wm_data",
         "format": "utf8",
@@ -314,15 +294,15 @@
         "y": 720,
         "wires": [
             [
-                "ff01cc00.35e14",
-                "c0cebaac.0fa318"
+                "9aec4d88.38352",
+                "98ce25dd.67b4b8"
             ]
         ]
     },
     {
-        "id": "ff01cc00.35e14",
+        "id": "9aec4d88.38352",
         "type": "http response",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "statusCode": "",
         "headers": {},
@@ -331,9 +311,9 @@
         "wires": []
     },
     {
-        "id": "c9f27178.0d9ec",
+        "id": "eca21230.9b50a",
         "type": "file",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "filename": "wm_data",
         "appendNewline": false,
@@ -347,9 +327,9 @@
         ]
     },
     {
-        "id": "c0cebaac.0fa318",
+        "id": "98ce25dd.67b4b8",
         "type": "change",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "rules": [
             {
@@ -369,14 +349,14 @@
         "y": 800,
         "wires": [
             [
-                "c9f27178.0d9ec"
+                "eca21230.9b50a"
             ]
         ]
     },
     {
-        "id": "cf6349fb.557248",
+        "id": "74718e00.c6966",
         "type": "function",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "string to JSON object",
         "func": "let chunks = msg.payload.split(/\\r?\\n/);\nlet statuses = [];\nfor (chunk of chunks){\n    if(!chunk)\n        continue;\n    //console.log(chunk);\n    statuses.push(JSON.parse(chunk));\n}\nmsg.payload = statuses;\nreturn msg;",
         "outputs": 1,
@@ -385,14 +365,14 @@
         "y": 80,
         "wires": [
             [
-                "7b66cd4d.a14194"
+                "e8eeccc5.5b843"
             ]
         ]
     },
     {
-        "id": "d24aa347.9482",
+        "id": "7f9e0926.c40b68",
         "type": "function",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "Filter with timestamp",
         "func": "let statuses = msg.payload.file;\nlet cur_timestamp = msg.payload.timestamp.timestamp;\nlet cut = 0;\nfor(let i = 0; i < statuses.length; ++i){\n    if(statuses[i].timestamp > cur_timestamp){\n        cut = i;\n        break;\n    }\n}\nmsg.payload = statuses.slice(cut);\nreturn msg;",
         "outputs": 1,
@@ -401,19 +381,88 @@
         "y": 280,
         "wires": [
             [
-                "7e02222e.2ed86c"
+                "976c2739.6fdfb8"
             ]
         ]
     },
     {
-        "id": "7e02222e.2ed86c",
+        "id": "976c2739.6fdfb8",
         "type": "http response",
-        "z": "f942f178.4481e",
+        "z": "b3db8fe0.90da3",
         "name": "",
         "statusCode": "",
         "headers": {},
         "x": 870,
         "y": 280,
         "wires": []
+    },
+    {
+        "id": "1d1a7716.8955c9",
+        "type": "inject",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 140,
+        "y": 440,
+        "wires": [
+            [
+                "dd716e22.9205e"
+            ]
+        ]
+    },
+    {
+        "id": "594aac04.8692f4",
+        "type": "file",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "filename": "wm_data",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 480,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6c114271.93911c",
+        "type": "function",
+        "z": "b3db8fe0.90da3",
+        "name": "WM status",
+        "func": "let OFFSET = 5; // time between writes in seconds\nlet timestamp = Math.floor(Date.now() / 1000).valueOf();\nlet prev_timestamp = context.get('timestamp') || 0;\n\nif(timestamp > prev_timestamp + OFFSET){\n    msg.payload = {\n        'timestamp': `${timestamp}`,\n        'status': true\n    };\n    context.set('timestamp', timestamp);\n    return msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 290,
+        "y": 520,
+        "wires": [
+            [
+                "594aac04.8692f4"
+            ]
+        ]
+    },
+    {
+        "id": "844c7fa.527b68",
+        "type": "rpi-gpio in",
+        "z": "b3db8fe0.90da3",
+        "name": "",
+        "pin": "11",
+        "intype": "tri",
+        "debounce": "25",
+        "read": false,
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "6c114271.93911c"
+            ]
+        ]
     }
 ]
