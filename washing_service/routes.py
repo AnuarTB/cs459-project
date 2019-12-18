@@ -170,20 +170,24 @@ def invoke_stat_service(building_id=None, laundry_room_id=None):
 
 @app.route('/buildings/<building_id>/<laundry_room_id>/<washing_machine_id>/update', methods=['GET'])
 def update_washing_machine(building_id=None, laundry_room_id=None, washing_machine_id=None):
-    is_running = request.args.get('is_running')
+    is_running_arg = request.args.get('is_running_arg')
+    if not(is_running_arg):
+        is_running = wm_client.get_wm_status(washing_machine_id)
+
     building = buildings_ref.document(building_id)
     room = building.collection('laundry_rooms').document(laundry_room_id)
     machine = room.collection('washing_machines').document(washing_machine_id)
 
     try:
-        if is_running:
-            machine.update({"is_running": bool(strtobool(is_running))})
+        if is_running_arg:
+            machine.update({"is_running": bool(strtobool(is_running_arg))})
         
             return jsonify({"success": True}), 200
         else:
-            is_running = wm_client.get_wm_status(washing_machine_id)
-            machine.update({"is_running": bool(strtobool(is_running))})
-            
+            # print(is_running['is_running'], file=sys.stdout)
+            temp_bool = is_running['is_running']
+            machine.update({"is_running": temp_bool})
+
             return jsonify({"success": True}), 200
 
     except Exception as e:
