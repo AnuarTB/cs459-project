@@ -20,11 +20,50 @@
     <div class="row">
     <div class = "offset-md-4 col-md-4">
     <h2>Welcome</h2>
-    {% if total_wms %}
+    {% if total_wms and not admin%}
         <div class="progress">
             <div class="progress-bar" role="progressbar" style="width: {{100*avail_wms/total_wms}}%" aria-valuemin="50" aria-valuemax="100">Now available: {{ avail_wms }} / {{ total_wms }}  </div>
         </div>
     {% endif %}
+    {% if admin %}
+    <form action="{{ url_for('admin') }}" method="post">
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Choose Dorm</label>
+            <select class="form-control" id="dorm_admin" name="dorm_admin">
+                <option>Areum Hall</option>
+                <option>Sarang Hall</option>
+                <option>Jilli Hall</option>
+                <option>Heemang Hall</option>
+                <option>Munji Hall</option>
+                <option>Mir Hall</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Choose Floor</label>
+            <select class="form-control" id="room_admin" name = "room_admin">
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+            </select>
+          </div>
+        <div class="form-group">
+            <label for="exampleFormControlSelect1">Select Day</label>
+            <select class="form-control" id="day_admin" name="day_admin">
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednessday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+            </select>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary">
+    </form> 
+    {% endif %}
+    {% if not admin %}
 	<form action="{{ url_for('process') }}" method="post">
         <div class="form-group">
             <label for="exampleFormControlSelect1">Select Day</label>
@@ -40,8 +79,9 @@
         </div>
         <input type="submit" value="Submit" class="btn btn-primary">
     </form>
+    {% endif %}
     <div id="chartContainer" style="height: 300px; width: 100%;">
-            {% if stat %}
+    {% if stat %}
         <script type="text/javascript">
             window.onload = function () {
                 var chart = new CanvasJS.Chart("chartContainer",

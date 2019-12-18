@@ -292,6 +292,8 @@ def home():
         admin = request.form.get('admin', default_user)
         global user
         user = User(email, password, building, room, admin)
+        if (user.admin == "on"):
+            return render_template('home.html', avail_wms = None, total_wms = None, stat= None, admin=True)
         avail_wm = read_buildings()
 
         #getting building id
@@ -311,7 +313,7 @@ def home():
         washing_machine = all_washing_machine.text
         j_wm = json.loads(washing_machine)
         avail_wms = get_running_wm(j_wm, False)
-    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat= None)
+    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat= None, admin=False)
 
 @app.route('/process', methods=['POST'])
 def process():
@@ -329,9 +331,42 @@ def process():
         avail_wms = get_running_wm(j_wm, False)
         graph = return_day(j_stat)
         print(return_day(j_stat))
-        return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=graph)
+        return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=graph, admin=False)
         
-    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=None)
+    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=None, admin=False)
+
+@app.route('/admin', methods=['POST'])
+def admin():
+    if request.method == "POST":
+        root= 'http://localhost:5000/'
+        admin_day = request.form["day_admin"]
+        admin_build = request.form["dorm_admin"]
+        admin_room = int(request.form["room_admin"])
+        #getting building id
+        avail_build = requests.get(root+'buildings')
+        build = avail_build.text
+        j_build = json.loads(build)
+        print(j_build)
+        build_id = get_build_id(j_build, admin_build)
+        admin_build_id = build_id
+        print(admin_build_id)
+        #getting room id
+        avail_room = requests.get(root+'buildings/'+admin_build_id+'/laundry_rooms')
+        room = avail_room.text
+        j_room = json.loads(room)
+        print(j_room)
+        room_id = get_room_id(j_room, admin_room)
+        admin_room_id = room_id
+        print(admin_room_id)
+        #getting day
+        admin_day = day_map[admin_day]
+        print(admin_day)
+        day_stat = requests.get(root+'buildings/'+admin_build_id+'/'+admin_room_id+'/get_daily_stat?weekday='+admin_day)
+        stat = day_stat.text
+        j_stat = json.loads(stat)
+        graph = return_day(j_stat)
+        print(j_stat)
+        return render_template('home.html', avail_wms = None, total_wms = None, stat=graph, admin=True)
 
 def get_build_id(value, name):
     for i in value:
