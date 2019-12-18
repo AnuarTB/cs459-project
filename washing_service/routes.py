@@ -1,4 +1,4 @@
-from flask import request, jsonify, 
+from flask import request, jsonify, render_template, Markup
 from distutils.util import strtobool
 from washing_service import app, db
 from washing_service import statisticsServiceClient as stat_client
@@ -266,6 +266,11 @@ class User:
         self.building = building
         self.room = room
         self.admin = admin
+        self.room_id = None
+        self.build_id = None
+        self.day = None
+user = None
+day_map = {'Monday':'1', 'Tuesday':'2', 'Wednessday':'3', 'Thursday': '4', 'Friday':'5', 'Saturday':'6', 'Sunday': '7'}
 @app.route('/')
 @app.route('/base')
 def index():
@@ -281,6 +286,7 @@ def home():
         room = int(request.form["room"])
         default_user = "off"
         admin = request.form.get('admin', default_user)
+        global user
         user = User(email, password, building, room, admin)
         avail_wm = read_buildings()
 
@@ -289,28 +295,39 @@ def home():
         build = avail_build.text
         j_build = json.loads(build)
         build_id = get_build_id(j_build, user.building)
-
+        user.build_id = build_id
         #getting room id
         avail_room = requests.get(root+'buildings/'+build_id+'/laundry_rooms')
         room = avail_room.text
         j_room = json.loads(room)
         room_id = get_room_id(j_room, user.room)
-
+        user.room_id = room_id
         #getting washing machines
         all_washing_machine = requests.get(root+'buildings/'+build_id+'/'+room_id+'/washing_machines')
         washing_machine = all_washing_machine.text
         j_wm = json.loads(washing_machine)
         avail_wms = get_running_wm(j_wm, False)
-    return render_template('home.html', avil = True, avail_wms = len(avail_wms), total_wms = len(j_wm))
+    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat= None)
 
 @app.route('/process', methods=['POST'])
 def process():
     if request.method == "POST":
+        root= 'http://localhost:5000/'
         day = request.form["day"]
-        print(day)
-        return render_template('home.html')
+        #get day stat
+        day_stat = requests.get(root+'buildings/'+user.build_id+'/'+user.room_id+'/get_daily_stat?weekday='+day_map[day])
+        stat = day_stat.text
+        j_stat = json.loads(stat)
+        print(j_stat)
+        all_washing_machine = requests.get(root+'buildings/'+user.build_id+'/'+user.room_id+'/washing_machines')
+        washing_machine = all_washing_machine.text
+        j_wm = json.loads(washing_machine)
+        avail_wms = get_running_wm(j_wm, False)
+        graph = return_day(j_stat)
+        print(return_day(j_stat))
+        return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=graph)
         
-    return render_template('home.html')
+    return render_template('home.html', avail_wms = len(avail_wms), total_wms = len(j_wm), stat=None)
 
 def get_build_id(value, name):
     for i in value:
@@ -328,3 +345,6 @@ def get_running_wm(value, boo):
         if(i['is_running']==boo):
             avail_wm.append(i['name'])
     return avail_wm
+def return_day(data):
+    value = [1, 2, 3, 4, 5, 6]
+    return [{'x': val, 'y': data[val-1]} for val in value]
